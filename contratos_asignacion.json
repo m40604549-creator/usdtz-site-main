@@ -1,0 +1,30 @@
+{
+  "total_general": "18000000000",
+  "asignacion_por_red": "6000000000",
+  "contratos": [
+    {
+      "red": "BNB Smart Chain (BEP-20)",
+      "chainId": 56,
+      "nombre": "Tether USD Bridged ZED20",
+      "simbolo": "USDTz",
+      "contrato": "0x4be35ec329343d7d9f548d42b0f8c17fffe07db4",
+      "cantidad_asignada": "6000000000"
+    },
+    {
+      "red": "Ethereum (ERC-20)",
+      "chainId": 1,
+      "nombre": "ZEB20",
+      "simbolo": "ZEB20",
+      "contrato": "0xB7953Cb0e98AdAE5b0782f0A195658Db5C971c14",
+      "cantidad_asignada": "6000000000"
+    },
+    {
+      "red": "Ethereum (ERC-20 alternativo)",
+      "chainId": 1,
+      "nombre": "Alternativo ZEB20",
+      "simbolo": "ZEB20",
+      "contrato": "0x8A0e3Be3118f0c9D05b466fF0D045a45aF6363A9",
+      "cantidad_asignada": "6000000000"
+    }
+  ]
+}
