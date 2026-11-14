@@ -9,9 +9,10 @@
         .box { max-width: 500px; margin: 0 auto; background: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
         h2 { color: #10b981; text-align: center; }
         .card { background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
-        input, button { width: 100%; padding: 10px; margin-top: 6px; border-radius: 5px; border: none; font-size: 15px; box-sizing: border-box; }
-        input { background: #374151; color: #fff; }
+        select, input, button { width: 100%; padding: 10px; margin-top: 6px; border-radius: 5px; border: none; font-size: 15px; box-sizing: border-box; }
+        select, input { background: #374151; color: #fff; }
         button { background: #10b981; color: #fff; font-weight: bold; cursor: pointer; }
+        button:hover { background: #059669; }
     </style>
 </head>
 <body>
@@ -23,10 +24,33 @@
         </div>
         <div class="card">
             <h3>Enviar a Wallet</h3>
-            <input type="text" id="w" placeholder="Dirección Wallet (0x...)">
-            <input type="number" id="c" placeholder="Cantidad">
-            <button onclick="alert('Función lista para conectar a red y transferir.')">Enviar a Wallet</button>
+            <label style="font-size: 13px; color: #9ca3af;">Seleccionar Contrato Origen:</label>
+            <select id="contratoOrigen">
+                <option value="contrato1">Contrato 1 - 9 Billones (Suministro Total)</option>
+                <option value="contrato2">Contrato 2 - 6 Billones (Circulante)</option>
+            </select>
+
+            <label style="font-size: 13px; color: #9ca3af; margin-top: 8px; display: block;">Wallet Destino:</label>
+            <input type="text" id="w" placeholder="0x...">
+            
+            <label style="font-size: 13px; color: #9ca3af; margin-top: 8px; display: block;">Cantidad:</label>
+            <input type="number" id="c" placeholder="0.00">
+            
+            <button onclick="realizarEnvio()" style="margin-top: 12px;">Enviar Tokens</button>
         </div>
     </div>
+
+    <script>
+        function realizarEnvio() {
+            const contrato = document.getElementById('contratoOrigen').value;
+            const wallet = document.getElementById('w').value;
+            const cantidad = document.getElementById('c').value;
+            if(!wallet || !cantidad) {
+                alert('Por favor ingresa la wallet y la cantidad.');
+                return;
+            }
+            alert('Preparando envío de ' + cantidad + ' USDTz desde ' + contrato + ' hacia ' + wallet);
+        }
+    </script>
 </body>
 </html>
