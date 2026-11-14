@@ -18,6 +18,7 @@
         .progress-bar { background: #374151; border-radius: 4px; height: 10px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 0.5s; }
         .hash-box { background: #030712; border: 1px solid #10b981; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 12px; word-break: break-all; color: #34d399; display: none; }
+        .hash-box a { color: #34d399; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -65,8 +66,9 @@
             <button onclick="realizarEnvio()" style="margin-top: 12px;">Enviar Tokens</button>
             
             <div id="hashResultado" class="hash-box">
-                <strong>¡Transacción Exitosa!</strong><br>
-                <span>Hash: </span><span id="textoHash"></span>
+                <strong>¡Simulación de Envío Exitosa!</strong><br>
+                <span>Hash generado: </span><br>
+                <a id="enlaceHash" href="#" target="_blank"><span id="textoHash"></span></a>
             </div>
         </div>
     </div>
@@ -91,14 +93,15 @@
                 return;
             }
 
-            // Generar hash de transacción simulado con formato blockchain
             const hashTx = generarHashAleatorio();
             
-            // Mostrar comprobante con hash en pantalla
             const cajaHash = document.getElementById('hashResultado');
             const spanHash = document.getElementById('textoHash');
+            const enlaceHash = document.getElementById('enlaceHash');
             
             spanHash.innerText = hashTx;
+            // Enlace directo hacia BscScan para verificar el hash generado
+            enlaceHash.href = "https://bscscan.com/tx/" + hashTx;
             cajaHash.style.display = 'block';
         }
     </script>
