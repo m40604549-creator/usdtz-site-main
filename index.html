@@ -3,123 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDTz - Panel Oficial Web3</title>
-    <style>
-        body { background: #0b0f19; color: #fff; font-family: Arial, sans-serif; padding: 20px; }
-        .box { max-width: 550px; margin: 0 auto; background: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
-        h2 { color: #10b981; text-align: center; }
-        .card { background: #1f2937; padding: 14px; border-radius: 6px; margin-bottom: 12px; }
-        select, input, button { width: 100%; padding: 10px; margin-top: 6px; border-radius: 5px; border: none; font-size: 15px; box-sizing: border-box; }
-        select, input { background: #374151; color: #fff; }
-        button { background: #10b981; color: #fff; font-weight: bold; cursor: pointer; }
-        button:hover { background: #059669; }
-        .address { font-size: 11px; color: #9ca3af; word-break: break-all; margin-top: 4px; }
-        .wallet-info { background: #1e293b; padding: 10px; border-radius: 5px; font-size: 13px; margin-bottom: 12px; text-align: center; border: 1px solid #334155; }
-    </style>
-    <!-- Carga de Ethers.js para interactuar directamente con la blockchain -->
+    <title>Panel de Envíos - USDTz</title>
+    <!-- Carga de Ethers.js desde CDN oficial -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 { text-align: center; color: #38bdf8; }
+        label { display: block; margin-top: 15px; font-size: 14px; color: #94a3b8; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background-color: #0ea5e9; }
+        #status { margin-top: 15px; font-size: 13px; text-align: center; word-break: break-all; }
+    </style>
 </head>
 <body>
-    <div class="box">
-        <h2>USDTz Portal Web3 Real</h2>
+
+    <div class="card">
+        <h2>Panel USDTz</h2>
         
-        <!-- Estado de Conexión de Wallet -->
-        <div class="wallet-info">
-            <span id="estadoWallet">Wallet no conectada</span>
-            <button onclick="conectarWallet()" style="margin-top: 8px; background: #3b82f6;">Conectar MetaMask / Wallet</button>
-        </div>
+        <label for="contractSelect">Seleccionar Contrato:</label>
+        <select id="contractSelect">
+            <option value="0x4be35ec329343d7d9f548d42b0f8c17fffe07db4">Contrato 1 (Suministro Total - 9B)</option>
+            <option value="0x9da3a065920797f2fca6bc5864bb6d7ea6a34331">Contrato 2 (Circulante - 6B)</option>
+        </select>
 
-        <!-- Información de Contratos -->
-        <div class="card">
-            <h3>Contrato 1 (Suministro Total)</h3>
-            <div class="address"><code>0x4be35ec329343d7d9f548d42b0f8c17fffe07db4</code></div>
-        </div>
+        <label for="recipient">Dirección Destino:</label>
+        <input type="text" id="recipient" placeholder="0x...">
 
-        <div class="card">
-            <h3>Contrato 2 (Circulante)</h3>
-            <div class="address"><code>0x9da3a065920797f2fca6bc5864bb6d7ea6a34331</code></div>
-        </div>
+        <label for="amount">Cantidad:</label>
+        <input type="number" id="amount" placeholder="0.0">
 
-        <!-- Panel de Envíos Reales -->
-        <div class="card">
-            <h3>Enviar Tokens Reales</h3>
-            <label style="font-size: 13px; color: #9ca3af;">Seleccionar Contrato Origen:</label>
-            <select id="contratoOrigen">
-                <option value="0x4be35ec329343d7d9f548d42b0f8c17fffe07db4">Contrato 1 - 9 Billones</option>
-                <option value="0x9da3a065920797f2fca6bc5864bb6d7ea6a34331">Contrato 2 - 6 Billones</option>
-            </select>
+        <button onclick="enviarTokens()">Conectar y Enviar</button>
 
-            <label style="font-size: 13px; color: #9ca3af; margin-top: 8px; display: block;">Wallet Destino:</label>
-            <input type="text" id="w" placeholder="0x...">
-            
-            <label style="font-size: 13px; color: #9ca3af; margin-top: 8px; display: block;">Cantidad:</label>
-            <input type="number" id="c" placeholder="0.00">
-            
-            <button onclick="enviarTokensReal()" style="margin-top: 12px;">Firmar y Enviar en Blockchain</button>
-        </div>
+        <div id="status"></div>
     </div>
 
     <script>
-        let provider;
-        let signer;
-
-        // ABI estándar de ERC-20 para la función transfer
-        const abiERC20 = [
-            "function transfer(address to, uint amount) returns (bool)"
+        // ABI básico estándar ERC-20 para transferencias
+        const minABI = [
+            "function transfer(address to, uint amount) public returns (bool)"
         ];
 
-        async function conectarWallet() {
-            if (window.ethereum) {
-                try {
-                    provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    signer = provider.getSigner();
-                    const address = await signer.getAddress();
-                    document.getElementById('estadoWallet').innerText = "Conectado: " + address.substring(0,6) + "..." + address.substring(38);
-                } catch (error) {
-                    alert("Error al conectar la wallet: " + error.message);
-                }
-            } else {
-                alert("Por favor abre esta página desde una DApp wallet como MetaMask o Kiwi Browser.");
-            }
-        }
-
-        async function enviarTokensReal() {
-            if (!signer) {
-                alert("Primero debes conectar tu wallet.");
-                return;
-            }
-
-            const direccionContrato = document.getElementById('contratoOrigen').value;
-            const destino = document.getElementById('w').value;
-            const cantidadInput = document.getElementById('c').value;
-
-            if (!destino || !cantidadInput) {
-                alert("Ingresa la dirección de destino y la cantidad.");
+        async function enviarTokens() {
+            const statusDiv = document.getElementById("status");
+            
+            if (typeof window.ethereum === 'undefined') {
+                statusDiv.innerHTML = "<span style='color: #ef4444;'>Por favor, abre esta página desde una billetera Web3 (como MetaMask o Trust Wallet).</span>";
                 return;
             }
 
             try {
-                // Instanciar el contrato inteligente con el proveedor real
-                const contrato = new ethers.Contract(direccionContrato, abiERC20, signer);
+                statusDiv.innerText = "Conectando a la billetera...";
                 
-                // Formatear los decimales del token (asumiendo 18 decimales estándar)
-                const cantidadParsed = ethers.utils.parseUnits(cantidadInput, 18);
-
-                alert("Se abrirá tu wallet para confirmar la transacción real en la red...");
-
-                // Ejecutar la transferencia real en la blockchain
-                const tx = await contrato.transfer(destino, cantidadParsed);
+                // Solicitar conexión a la red y cuenta del usuario
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
                 
-                alert("¡Transacción enviada a la red! Hash: " + tx.hash);
-                
-                // Redirigir automáticamente al explorador BscScan de la transacción real
-                window.open("https://bscscan.com/tx/" + tx.hash, "_blank");
+                // Verificar que estemos en BNB Smart Chain (Chain ID: 56)
+                const network = await provider.getNetwork();
+                if (network.chainId !== 56) {
+                    statusDiv.innerHTML = "<span style='color: #f59e0b;'>Cambia tu red a BNB Smart Chain en tu billetera.</span>";
+                    return;
+                }
 
+                const signer = provider.getSigner();
+                const contractAddress = document.getElementById("contractSelect").value;
+                const recipient = document.getElementById("recipient").value;
+                const rawAmount = document.getElementById("amount").value;
+
+                if (!recipient || !rawAmount) {
+                    statusDiv.innerHTML = "<span style='color: #ef4444;'>Completa todos los campos.</span>";
+                    return;
+                }
+
+                statusDiv.innerText = "Preparando transacción...";
+                const contract = new ethers.Contract(contractAddress, minABI, signer);
+                
+                // Asumiendo 18 decimales estándar para el token
+                const amount = ethers.utils.parseUnits(rawAmount, 18);
+
+                statusDiv.innerText = "Confirma la transacción en tu billetera...";
+                const tx = await contract.transfer(recipient, amount);
+
+                statusDiv.innerText = "Transacción enviada. Esperando confirmación...";
+                await tx.wait();
+
+                statusDiv.innerHTML = `<span style='color: #22c55e;'>¡Envío exitoso! Hash: ${tx.hash}</span>`;
             } catch (error) {
-                alert("Error en la transacción: " + (error.data?.message || error.message));
+                console.error(error);
+                statusDiv.innerHTML = `<span style='color: #ef4444;'>Error: ${error.message || error}</span>`;
             }
         }
     </script>
 </body>
 </html>
+
