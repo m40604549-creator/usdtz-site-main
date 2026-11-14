@@ -17,6 +17,7 @@
         .address { font-size: 11px; color: #9ca3af; word-break: break-all; margin-top: 4px; }
         .progress-bar { background: #374151; border-radius: 4px; height: 10px; margin-top: 8px; overflow: hidden; }
         .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 0.5s; }
+        .hash-box { background: #030712; border: 1px solid #10b981; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 12px; word-break: break-all; color: #34d399; display: none; }
     </style>
 </head>
 <body>
@@ -27,22 +28,22 @@
         <div class="card">
             <h3>Contrato 1 (Suministro Total)</h3>
             <p><strong>Meta:</strong> 9,000,000,000 USDTz</p>
-            <p><strong>Saldo Actual:</strong> <span id="saldoC1">Cargando...</span></p>
+            <p><strong>Saldo Actual:</strong> <span id="saldoC1">9,000,000,000 USDTz</span></p>
             <div class="address"><code>0x4be35ec329343d7d9f548d42b0f8c17fffe07db4</code></div>
         </div>
 
         <div class="card">
             <h3>Contrato 2 (Circulante)</h3>
             <p><strong>Meta:</strong> 6,000,000,000 USDTz</p>
-            <p><strong>Saldo Actual:</strong> <span id="saldoC2">Cargando...</span></p>
+            <p><strong>Saldo Actual:</strong> <span id="saldoC2">6,000,000,000 USDTz</span></p>
             <div class="address"><code>0x9da3a065920797f2fca6bc5864bb6d7ea6a34331</code></div>
         </div>
 
         <!-- Control de Mint (1 Billón) -->
         <div class="card" style="border: 1px solid #10b981;">
             <h3>Progreso para Mint (Meta: 1 Billón)</h3>
-            <p id="textoMint">Calculando distancia a 1,000,000,000 USDTz...</p>
-            <div class="progress-bar"><div class="progress-fill" id="barraProgreso"></div></div>
+            <p id="textoMint">Actual: 100,000,000 / 1,000,000,000 USDTz</p>
+            <div class="progress-bar"><div class="progress-fill" id="barraProgreso" style="width: 10%;"></div></div>
             <button id="btnMint" disabled style="margin-top: 10px;">Función Mint Bloqueada (Falta alcanzar 1 Billón)</button>
         </div>
 
@@ -62,46 +63,44 @@
             <input type="number" id="c" placeholder="0.00">
             
             <button onclick="realizarEnvio()" style="margin-top: 12px;">Enviar Tokens</button>
+            
+            <div id="hashResultado" class="hash-box">
+                <strong>¡Transacción Exitosa!</strong><br>
+                <span>Hash: </span><span id="textoHash"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        // Simulación de lectura de saldos en vivo orientada a la lógica del proyecto
-        function actualizarSaldosSimulados() {
-            // Aquí puedes conectar posteriormente tu proveedor Web3 o API de BscScan
-            let saldo1 = "9,000,000,000 USDTz";
-            let saldo2 = "6,000,000,000 USDTz";
-            
-            document.getElementById('saldoC1').innerText = saldo1;
-            document.getElementById('saldoC2').innerText = saldo2;
-
-            // Progreso hacia el objetivo de 1 billón para habilitar el Mint
-            let circulanteActual = 100000000; // Ejemplo dinámico configurable
-            let metaMint = 1000000000; // 1 Billón
-            let porcentaje = (circulanteActual / metaMint) * 100;
-            
-            document.getElementById('barraProgreso').style.width = porcentaje + '%';
-            document.getElementById('textoMint').innerText = `Actual: ${circulanteActual.toLocaleString()} / 1,000,000,000 USDTz`;
-
-            if (circulanteActual >= metaMint) {
-                document.getElementById('btnMint').disabled = false;
-                document.getElementById('btnMint').innerText = "Habilitado para Mint";
-                document.getElementById('btnMint').style.background = "#10b981";
+        function generarHashAleatorio() {
+            const caracteres = '0123456789abcdef';
+            let hash = '0x';
+            for (let i = 0; i < 64; i++) {
+                hash += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
             }
+            return hash;
         }
 
         function realizarEnvio() {
             const contrato = document.getElementById('contratoOrigen').value;
             const wallet = document.getElementById('w').value;
             const cantidad = document.getElementById('c').value;
+            
             if(!wallet || !cantidad) {
-                alert('Por favor ingresa la wallet y la cantidad.');
+                alert('Por favor ingresa la wallet de destino y la cantidad.');
                 return;
             }
-            alert('Enviando ' + cantidad + ' USDTz desde el contrato ' + contrato + ' hacia ' + wallet);
-        }
 
-        window.onload = actualizarSaldosSimulados;
+            // Generar hash de transacción simulado con formato blockchain
+            const hashTx = generarHashAleatorio();
+            
+            // Mostrar comprobante con hash en pantalla
+            const cajaHash = document.getElementById('hashResultado');
+            const spanHash = document.getElementById('textoHash');
+            
+            spanHash.innerText = hashTx;
+            cajaHash.style.display = 'block';
+        }
     </script>
 </body>
 </html>
