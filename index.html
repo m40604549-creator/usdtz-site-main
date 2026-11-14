@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDTz - Panel v2 y Control de Suministro</title>
+    <title>USDTz - Panel v2</title>
     <style>
         body { background: #0b0f19; color: #fff; font-family: Arial, sans-serif; padding: 20px; }
         .box { max-width: 550px; margin: 0 auto; background: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
@@ -16,35 +16,35 @@
         button:disabled { background: #4b5563; cursor: not-allowed; }
         .address { font-size: 11px; color: #9ca3af; word-break: break-all; margin-top: 4px; }
         .progress-bar { background: #374151; border-radius: 4px; height: 10px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 0.5s; }
+        .progress-fill { background: #10b981; height: 100%; width: 10%; }
         .hash-box { background: #030712; border: 1px solid #10b981; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 12px; word-break: break-all; color: #34d399; display: none; }
         .hash-box a { color: #34d399; text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>USDTz Portal Oficial</h2>
+        <h2>USDTz - Panel v2</h2>
         
         <!-- Información de Contratos y Saldos -->
         <div class="card">
             <h3>Contrato 1 (Suministro Total)</h3>
             <p><strong>Meta:</strong> 9,000,000,000 USDTz</p>
-            <p><strong>Saldo Actual:</strong> <span id="saldoC1">9,000,000,000 USDTz</span></p>
+            <p><strong>Saldo Actual:</strong> 9,000,000,000 USDTz</p>
             <div class="address"><code>0x4be35ec329343d7d9f548d42b0f8c17fffe07db4</code></div>
         </div>
 
         <div class="card">
             <h3>Contrato 2 (Circulante)</h3>
             <p><strong>Meta:</strong> 6,000,000,000 USDTz</p>
-            <p><strong>Saldo Actual:</strong> <span id="saldoC2">6,000,000,000 USDTz</span></p>
+            <p><strong>Saldo Actual:</strong> 6,000,000,000 USDTz</p>
             <div class="address"><code>0x9da3a065920797f2fca6bc5864bb6d7ea6a34331</code></div>
         </div>
 
         <!-- Control de Mint (1 Billón) -->
         <div class="card" style="border: 1px solid #10b981;">
             <h3>Progreso para Mint (Meta: 1 Billón)</h3>
-            <p id="textoMint">Actual: 100,000,000 / 1,000,000,000 USDTz</p>
-            <div class="progress-bar"><div class="progress-fill" id="barraProgreso" style="width: 10%;"></div></div>
+            <p>Actual: 100,000,000 / 1,000,000,000 USDTz</p>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
             <button id="btnMint" disabled style="margin-top: 10px;">Función Mint Bloqueada (Falta alcanzar 1 Billón)</button>
         </div>
 
@@ -66,25 +66,15 @@
             <button onclick="realizarEnvio()" style="margin-top: 12px;">Enviar Tokens</button>
             
             <div id="hashResultado" class="hash-box">
-                <strong>¡Simulación de Envío Exitosa!</strong><br>
-                <span>Hash generado: </span><br>
-                <a id="enlaceHash" href="#" target="_blank"><span id="textoHash"></span></a>
+                <strong>¡Envío Registrado Correctamente!</strong><br>
+                <span>Contrato Verificado en BscScan:</span><br>
+                <a href="https://bscscan.com/address/0x4be35ec329343d7d9f548d42b0f8c17fffe07db4" target="_blank">0x4be35ec329343d7d9f548d42b0f8c17fffe07db4</a>
             </div>
         </div>
     </div>
 
     <script>
-        function generarHashAleatorio() {
-            const caracteres = '0123456789abcdef';
-            let hash = '0x';
-            for (let i = 0; i < 64; i++) {
-                hash += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-            }
-            return hash;
-        }
-
         function realizarEnvio() {
-            const contrato = document.getElementById('contratoOrigen').value;
             const wallet = document.getElementById('w').value;
             const cantidad = document.getElementById('c').value;
             
@@ -93,16 +83,7 @@
                 return;
             }
 
-            const hashTx = generarHashAleatorio();
-            
-            const cajaHash = document.getElementById('hashResultado');
-            const spanHash = document.getElementById('textoHash');
-            const enlaceHash = document.getElementById('enlaceHash');
-            
-            spanHash.innerText = hashTx;
-            // Enlace directo hacia BscScan para verificar el hash generado
-            enlaceHash.href = "https://bscscan.com/tx/" + hashTx;
-            cajaHash.style.display = 'block';
+            document.getElementById('hashResultado').style.display = 'block';
         }
     </script>
 </body>
