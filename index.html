@@ -3,31 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDTz - Panel Oficial</title>
+    <title>USDTz - Panel Oficial y Control de Suministro</title>
     <style>
         body { background: #0b0f19; color: #fff; font-family: Arial, sans-serif; padding: 20px; }
-        .box { max-width: 500px; margin: 0 auto; background: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
+        .box { max-width: 550px; margin: 0 auto; background: #111827; padding: 20px; border-radius: 10px; border: 1px solid #1f2937; }
         h2 { color: #10b981; text-align: center; }
-        .card { background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+        .card { background: #1f2937; padding: 14px; border-radius: 6px; margin-bottom: 12px; }
         select, input, button { width: 100%; padding: 10px; margin-top: 6px; border-radius: 5px; border: none; font-size: 15px; box-sizing: border-box; }
         select, input { background: #374151; color: #fff; }
         button { background: #10b981; color: #fff; font-weight: bold; cursor: pointer; }
         button:hover { background: #059669; }
+        button:disabled { background: #4b5563; cursor: not-allowed; }
+        .address { font-size: 11px; color: #9ca3af; word-break: break-all; margin-top: 4px; }
+        .progress-bar { background: #374151; border-radius: 4px; height: 10px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 0.5s; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>USDTz Portal</h2>
+        <h2>USDTz Portal Oficial</h2>
+        
+        <!-- Información de Contratos y Saldos -->
         <div class="card">
-            <p><strong>Contrato 1 (Suministro Total):</strong> 9,000,000,000 USDTz (9 Billones)</p>
-            <p><strong>Contrato 2 (Circulante):</strong> 6,000,000,000 USDTz (6 Billones)</p>
+            <h3>Contrato 1 (Suministro Total)</h3>
+            <p><strong>Meta:</strong> 9,000,000,000 USDTz</p>
+            <p><strong>Saldo Actual:</strong> <span id="saldoC1">Cargando...</span></p>
+            <div class="address"><code>0x4be35ec329343d7d9f548d42b0f8c17fffe07db4</code></div>
         </div>
+
+        <div class="card">
+            <h3>Contrato 2 (Circulante)</h3>
+            <p><strong>Meta:</strong> 6,000,000,000 USDTz</p>
+            <p><strong>Saldo Actual:</strong> <span id="saldoC2">Cargando...</span></p>
+            <div class="address"><code>0x9da3a065920797f2fca6bc5864bb6d7ea6a34331</code></div>
+        </div>
+
+        <!-- Control de Mint (1 Billón) -->
+        <div class="card" style="border: 1px solid #10b981;">
+            <h3>Progreso para Mint (Meta: 1 Billón)</h3>
+            <p id="textoMint">Calculando distancia a 1,000,000,000 USDTz...</p>
+            <div class="progress-bar"><div class="progress-fill" id="barraProgreso"></div></div>
+            <button id="btnMint" disabled style="margin-top: 10px;">Función Mint Bloqueada (Falta alcanzar 1 Billón)</button>
+        </div>
+
+        <!-- Panel de Envíos -->
         <div class="card">
             <h3>Enviar a Wallet</h3>
             <label style="font-size: 13px; color: #9ca3af;">Seleccionar Contrato Origen:</label>
             <select id="contratoOrigen">
-                <option value="contrato1">Contrato 1 - 9 Billones (Suministro Total)</option>
-                <option value="contrato2">Contrato 2 - 6 Billones (Circulante)</option>
+                <option value="0x4be35ec329343d7d9f548d42b0f8c17fffe07db4">Contrato 1 - 9 Billones</option>
+                <option value="0x9da3a065920797f2fca6bc5864bb6d7ea6a34331">Contrato 2 - 6 Billones</option>
             </select>
 
             <label style="font-size: 13px; color: #9ca3af; margin-top: 8px; display: block;">Wallet Destino:</label>
@@ -41,6 +66,30 @@
     </div>
 
     <script>
+        // Simulación de lectura de saldos en vivo orientada a la lógica del proyecto
+        function actualizarSaldosSimulados() {
+            // Aquí puedes conectar posteriormente tu proveedor Web3 o API de BscScan
+            let saldo1 = "9,000,000,000 USDTz";
+            let saldo2 = "6,000,000,000 USDTz";
+            
+            document.getElementById('saldoC1').innerText = saldo1;
+            document.getElementById('saldoC2').innerText = saldo2;
+
+            // Progreso hacia el objetivo de 1 billón para habilitar el Mint
+            let circulanteActual = 100000000; // Ejemplo dinámico configurable
+            let metaMint = 1000000000; // 1 Billón
+            let porcentaje = (circulanteActual / metaMint) * 100;
+            
+            document.getElementById('barraProgreso').style.width = porcentaje + '%';
+            document.getElementById('textoMint').innerText = `Actual: ${circulanteActual.toLocaleString()} / 1,000,000,000 USDTz`;
+
+            if (circulanteActual >= metaMint) {
+                document.getElementById('btnMint').disabled = false;
+                document.getElementById('btnMint').innerText = "Habilitado para Mint";
+                document.getElementById('btnMint').style.background = "#10b981";
+            }
+        }
+
         function realizarEnvio() {
             const contrato = document.getElementById('contratoOrigen').value;
             const wallet = document.getElementById('w').value;
@@ -49,8 +98,10 @@
                 alert('Por favor ingresa la wallet y la cantidad.');
                 return;
             }
-            alert('Preparando envío de ' + cantidad + ' USDTz desde ' + contrato + ' hacia ' + wallet);
+            alert('Enviando ' + cantidad + ' USDTz desde el contrato ' + contrato + ' hacia ' + wallet);
         }
+
+        window.onload = actualizarSaldosSimulados;
     </script>
 </body>
 </html>
